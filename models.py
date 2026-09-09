@@ -1,42 +1,61 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime, timezone
 
-db = SQLAlchemy()
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
 
 # Classes like Tables 
 class User(db.Model):
     __tablename__ = "users"
 
     # Attributes
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50),unique=True, nullable=False)
-    email = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), unique=True)
+    email: Mapped[str] = mapped_column(String(50), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(256))
 
     # Allow access back to the user's data trought the Device table
-    devices = db.relationship('Device', backref='owner', lazy=True, cascade='all, delete-orphan')
+    devices: Mapped[list["Device"]] = relationship(
+        back_populates="owner",
+        cascade="all, delete-orphan"
+    )
 
 
 class Device(db.Model):
     __tablename__ = "devices"
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable=False)
-    name = db.Column(db.String(50), nullable=False)
-    model = db.Column(db.String(50), nullable=True)
-    host = db.Column(db.String(50), nullable=False)
-    protocol = db.Column(db.String(20), nullable=False)
-    port = db.Column(db.Integer, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String(50))
+    model: Mapped[str] = mapped_column(String(50))
+    host: Mapped[str] = mapped_column(String(50))
+    protocol: Mapped[str | None] = mapped_column(nullable=True)
+    port: Mapped[int | None] = mapped_column(nullable=True)
 
     # Allow access back to the device's data trought the CheckLog table
-    checklogs = db.relationship('CheckLog', backref='device', lazy=True, cascade='all, delete-orphan')
+    owner: Mapped["User"] = relationship(back_populates="devices")
+
+    check_logs: Mapped[list["CheckLog"]] = relationship(
+        back_populates="device",
+        cascade="all, delete-orphan"
+    )
 
 
 class CheckLog(db.Model):
     __tablename__ = "check_logs"
 
-    id = db.Column(db.Integer, primary_key=True)
-    device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=False)
-    status = db.Column(db.String(50), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    response_time = db.Column(db.Float, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"))
+    status: Mapped[str] = mapped_column(String(30))
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
+    response_time: Mapped[float | None]
+
+    device: Mapped["Device"] = relationship(
+        back_populates="check_logs"
+    )
+
+    
