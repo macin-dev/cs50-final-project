@@ -13,6 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
 
+    # Allow access back to the user's data trought the Device table
     devices = db.relationship('Device', backref='owner', lazy=True, cascade='all, delete-orphan')
 
 
@@ -27,6 +28,7 @@ class Device(db.Model):
     protocol = db.Column(db.String(20), nullable=False)
     port = db.Column(db.Integer, nullable=True)
 
+    # Allow access back to the device's data trought the CheckLog table
     checklogs = db.relationship('CheckLog', backref='device', lazy=True, cascade='all, delete-orphan')
 
 
