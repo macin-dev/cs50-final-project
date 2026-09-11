@@ -1,5 +1,6 @@
 from flask import Flask
-from models import db
+from models import db, Device, CheckLog
+from checker import check_tcp
 
 app = Flask(__name__)
 
@@ -17,6 +18,29 @@ with app.app_context():
 @app.route('/')
 def index():
     return "<h1>NetWatch is running!</h1>"
+
+@app.route('/api/devices/<int:device_id>/check')
+def check_device(device_id):
+    # Retrieve the device from the database 
+    # and check the TCP connection
+    device = db.get_or_404(Device, device_id)
+    conn = check_tcp(device.host, device.port)
+
+    # Record new row in the check_logs
+    new_log = CheckLog(
+        device_id=device_id,
+        status=conn["status"],
+        response_time=conn["response_time"],
+    )
+
+    # Commit changes to the database
+    db.session.add(new_log)
+    db.session.commit()
+
+    # Returns a JSON response with the result
+    return { 
+        "message": "log created successfully"
+    }, 200
 
 
 # Activate auto-reloader and debug mode

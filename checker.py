@@ -16,4 +16,4 @@ def check_tcp(host, port, timeout=3.0):
 
 if __name__ == "__main__":
     print("Testing Google HTTP:")
-    print(check_tcp("google.com", 443))
+    print(check_tcp("142.250.190.238", 80))
