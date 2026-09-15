@@ -4,3 +4,5 @@ __pycache__/
 instance/
 *.db
 .DS_Store
+.prettierrcs
+node_modules

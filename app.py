@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from models import db, Device, CheckLog
 from checker import check_tcp
 from flask_migrate import Migrate
+from sqlalchemy import func
 
 app = Flask(__name__)
 
@@ -21,7 +22,41 @@ with app.app_context():
 # Routes
 @app.route('/')
 def index():
-    return "<h1>NetWatch is running!</h1>"
+    # Retrieve data from the devices table
+    # Find the highest log by ID for each device
+    latest_device_log = (
+        db.select(
+            CheckLog.device_id,
+            func.max(CheckLog.id).label("max_id")
+        )
+        .group_by(CheckLog.device_id)
+        .subquery()
+    )
+
+    # Match each device's id with the last device's id log
+    stmt = (
+        db.select(Device, CheckLog)
+        .outerjoin(latest_device_log, Device.id == latest_device_log.c.device_id)
+        .outerjoin(CheckLog, CheckLog.id == latest_device_log.c.max_id)
+    )
+
+    devices = db.session.execute(stmt).all()
+    data = []
+
+    # Serializing Python objects into JSON
+    for device, log in devices:
+        data.append({
+            "id": device.id,
+            "name": device.name,
+            "host": device.host,
+            "port": device.port,
+            "status": log.status if log else "UNCHECKED",
+            "latency": log.response_time if log else None,
+            "created_at": log.created_at if log else "Never"
+        })
+
+    # Return with a status code of success
+    return render_template('index.html', data=data), 200
 
 @app.route('/api/devices/<int:device_id>/check')
 def check_device(device_id):
@@ -46,7 +81,7 @@ def check_device(device_id):
         "message": "log created successfully"
     }, 200
 
-@app.route('/api/devices', methods=["GET", "POST"])
+@app.route('/api/devices', methods=["POST"])
 def add_device():
     user_id = 1
 
@@ -78,26 +113,7 @@ def add_device():
             "message": "Device added succsessfully",
             "id": new_device.id
         }, 201
-
-    # [GET] requests
-    # Retrieve data from the devices table
-    devices = Device.query.all()
-
-    results = []
-
-    # Serializing Python objects into JSON
-    for d in devices:
-        results.append({
-            "id": d.id,
-            "name": d.name,
-            "host": d.host,
-            "port": d.port,
-            "protocol": d.protocol,
-            "model": d.model
-        })
-
-    # Return with a status code of success
-    return results, 200
+    
 
 @app.route('/api/devices/<int:device_id>', methods=["DELETE"])
 def delete_device(device_id):
