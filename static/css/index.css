@@ -3,3 +3,30 @@
 body {
   font-family: "Manrope", sans-serif;
 }
+
+/* Circular spinning spiral */
+.spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.htmx-request .btn-check,
+.htmx-request .btn-dots {
+  display: none;
+}
+
+.htmx-request .spinner {
+  display: inline-block;
+}

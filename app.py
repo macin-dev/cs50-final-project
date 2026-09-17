@@ -76,10 +76,23 @@ def check_device(device_id):
     db.session.add(new_log)
     db.session.commit()
 
-    # Returns a JSON response with the result
-    return { 
-        "message": "log created successfully"
-    }, 200
+    # [ROW DATA]
+    row = {
+        "id": device.id,
+        "name": device.name,
+        "host": device.host,
+        "port": device.port,
+        "status": new_log.status,
+        "latency": new_log.response_time,
+        "created_at": new_log.created_at
+    }
+
+    if  request.headers.get('Hx-Request'):
+        # Return the new generated HTML template with the newest data
+        return render_template('partials/_row.html', row=row)
+
+    return row, 200
+
 
 @app.route('/api/devices', methods=["POST"])
 def add_device():

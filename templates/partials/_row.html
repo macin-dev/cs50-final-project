@@ -1,0 +1,42 @@
+<tr
+  id="{{ row.id }}"
+  class="border-b border-gray-200 transition hover:bg-slate-50"
+>
+  <td class="px-4.5 py-4.25 text-[0.8125rem] font-bold">{{ row.name }}</td>
+  <td class="px-4.5 py-4.25 text-[0.75rem]">{{ row.host }} : {{ row.port }}</td>
+  <td class="px-4.5 py-4.25 text-[0.6875rem] font-semibold">
+    <span
+      class="{% if row.status == 'OFFLINE' %} text-red-700 bg-red-50 {% elif row.status == 'UNCHECKED' %} bg-slate-50 text-slate-700 {% else %}bg-green-50 text-green-700 {% endif %} font-bold inline-flex items-center gap-1.5 rounded-[1.25rem] px-2.25 py-1.25 text-[0.6875rem] lowercase"
+    >
+      <span
+        class="{% if row.status == 'OFFLINE' %} bg-red-700 {% elif row.status == 'UNCHECKED' %} bg-slate-700 {% else %} bg-green-700 {% endif %} w-1.5 h-1.5 rounded-full"
+      ></span>
+      {{ row.status }}</span
+    >
+  </td>
+  <td class="px-4.5 py-4.25 text-[0.8125rem]">{{ row.created_at }}</td>
+  <td class="px-4.5 py-4.25 text-[0.75rem] font-semibold">
+    {% if not row.latency %} &mdash; {% else %} {{ row.latency }} ms {% endif %}
+  </td>
+  <td class="px-4.5 py-4.25">
+    <span class="spinner"></span>
+    <div class="inline-flex gap-2">
+      <button
+        type="button"
+        hx-get="/api/devices/{{ row.id }}/check"
+        hx-target="closest tr"
+        hx-swap="outerHTML"
+        hx-indicator="closest td"
+        class="btn-check cursor-pointer rounded-[0.4375rem] border border-gray-200 px-2.75 py-2 text-[0.6875rem] transition hover:border-gray-400 hover:bg-gray-100"
+      >
+        Check
+      </button>
+      <button
+        type="button"
+        class="btn-dots cursor-pointer rounded-[0.4375rem] border border-gray-300 px-2 transition hover:border-gray-400 hover:bg-gray-100"
+      >
+        <i data-lucide="more-horizontal" class="w-4.5 h-4.5"></i>
+      </button>
+    </div>
+  </td>
+</tr>
