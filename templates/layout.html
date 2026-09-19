@@ -79,5 +79,9 @@
     addModal.addEventListener("click", (el) => {
       if (el.target == addModal) return addModal.close();
     });
+
+    document.body.addEventListener("device-created", () => {
+      addModal.close();
+    });
   </script>
 </html>

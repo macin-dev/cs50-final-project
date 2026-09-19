@@ -110,15 +110,39 @@ def add_device():
         protocol = data.get("protocol", "HTTP")
         raw_port = data.get("port")
 
-        try: 
-            port = int(raw_port) if raw_port else 80
-        except ValueError:
-            return {"error": "Invalid number"}, 400
+        # [FORM VALIDATION]
+        # Format error dic
+        errors = {}
 
-        # Validate input
+        if not raw_port:
+            errors['port'] = "Port is missing"
+        else: 
+            try: 
+                port = int(raw_port)
+
+                if port < 1 or port > 65535:
+                    errors["port"] = "Invalid port, valid range: 1 - 65535"
+            except ValueError:
+                errors["port"] = "Invalid port, valid range: 1 - 65535"
+
         if not deviceName or not host:
-            # 400 status code for malformed requests
-            return {"error": "Missing required fields"}, 400
+            if not deviceName: 
+                errors['name'] = "Device name is missing" 
+            if not host: 
+                errors["host"] = "Host is missing"
+
+        if errors:
+            if request.headers.get('Hx-Request'):
+                return (
+                    render_template('partials/_errors.html', errors=errors), 
+                    200, 
+                    {
+                        "Hx-Retarget": "#form-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
+            else: 
+                return errors, 400
         
         # Create instance of Device
         new_device = Device(
@@ -145,7 +169,13 @@ def add_device():
         }
 
         if (request.headers.get('Hx-Request')):
-            return render_template("partials/_row.html", row=row), 200
+            return (
+                render_template("partials/_row.html", row=row), 
+                200,
+                { 
+                    "HX-Trigger-After-Swap": "device-created"
+                },
+            )
 
         return {
             "message": "Device added succsessfully",
