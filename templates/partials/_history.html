@@ -1,0 +1,37 @@
+<section class="p-7">
+  <!-- Modal head -->
+  <div class="flex justify-between gap-4 mb-6">
+    <div>
+      <p
+        class="uppercase font-medium tracking-[0.14em] mb-3 text-gray-600 text-[0.6875rem]"
+      >
+        Check History
+      </p>
+      <h2 class="text-[1.375rem] tracking-[-0.035em] font-bold">
+        {{ device.name }} logs
+      </h2>
+    </div>
+
+    <button
+      type="button"
+      onclick="document.getElementById('logs-modal').close()"
+      class="inline-flex items-center justify-center bg-gray-200 w-7.75 h-7.75 rounded-lg cursor-pointer"
+    >
+      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+    </button>
+  </div>
+
+  <!-- Device IP -->
+  <div
+    class="bg-slate-50 font-['DM_Mono'] border border-slate-300 p-3.5 rounded-xl font-normal text-[0.75rem] mb-6"
+  >
+    {{ device.host }}:{{ device.port }} . {{ device.protocol }}
+  </div>
+
+  <!-- Timeline  -->
+  <div>
+    {% for log in logs %} {% include 'partials/_log.html' %} {% else %}
+    <p class="text-sm text-gray-700">No check history recorded yet.</p>
+    {% endfor %}
+  </div>
+</section>

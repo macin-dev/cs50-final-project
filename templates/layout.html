@@ -4,10 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Google fonts -->
+    <!-- Manrope -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- DM Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap"
       rel="stylesheet"
     />
 
@@ -21,6 +29,11 @@
     <title>{% block title %}Netwatch{% endblock %}</title>
   </head>
   <body>
+    <!-- Modal for logs history -->
+    <dialog
+      id="logs-modal"
+      class="m-0 ml-auto max-w-107.5 w-full min-h-full bg-white shadow-2xl shadow-black/50 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+    ></dialog>
     <main>{% block content %} {% endblock %}</main>
   </body>
 
@@ -33,8 +46,28 @@
   <script>
     lucide.createIcons();
 
-    htmx.onLoad(function (content) {
+    function formatLocalTime(root = document) {
+      root.querySelectorAll(".local-time").forEach((el) => {
+        const isoString = el.getAttribute("datetime");
+        if (!isoString) return;
+
+        const date = new Date(isoString);
+        el.textContent = date.toLocaleString([], {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
+      });
+    }
+
+    htmx.onLoad(function () {
       lucide.createIcons();
+      formatLocalTime();
+    });
+
+    // Close modal when clicking on the backdrop of dialog element
+    const modal = document.getElementById("logs-modal");
+    modal.addEventListener("click", (el) => {
+      if (el.target == modal) return modal.close();
     });
   </script>
 </html>

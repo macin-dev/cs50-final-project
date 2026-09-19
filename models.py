@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, desc
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime, timezone
 
@@ -40,6 +40,7 @@ class Device(db.Model):
     owner: Mapped["User"] = relationship(back_populates="devices")
 
     check_logs: Mapped[list["CheckLog"]] = relationship(
+        order_by=lambda: desc(CheckLog.created_at),
         back_populates="device",
         cascade="all, delete-orphan"
     )

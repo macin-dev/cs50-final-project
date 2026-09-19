@@ -1,0 +1,25 @@
+<div class="grid grid-cols-[16px_1fr] gap-3">
+  <!-- Log line -->
+  <div class="flex flex-col items-center">
+    <span
+      class="{% if log.status == 'ONLINE' %} bg-teal-700 {% else %} bg-red-700 {% endif %} w-2 h-2 rounded-full mt-1.5 shrink-0"
+    ></span>
+    <span
+      class="w-px {% if log.status == 'ONLINE' %} bg-teal-700 {% else %} bg-red-700 {% endif %} grow"
+    >
+    </span>
+  </div>
+
+  <!-- log info -->
+  <div class="pb-5">
+    <time
+      class="local-time text-[0.8125rem] font-medium"
+      datetime="{{ log.created_at.isoformat() }}Z"
+    ></time>
+    <p class="text-gray-400 font-['DM_Mono'] text-xs">
+      Connection {% if log.status == 'ONLINE' %} succeeded {% else %} timed out
+      {% endif %} . {% if not log.response_time %} - {% else%} {{
+      log.response_time }} ms {% endif %}
+    </p>
+  </div>
+</div>

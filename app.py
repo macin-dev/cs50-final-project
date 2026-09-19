@@ -158,6 +158,10 @@ def device_logs(device_id):
             "response_time": l.response_time
         })
 
+
+    if request.headers.get('Hx-Request'):
+        return render_template('partials/_history.html', device=device, logs=results), 200
+
     return results, 200
 
 # Activate auto-reloader and debug mode

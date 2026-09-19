@@ -33,6 +33,9 @@
       </button>
       <button
         type="button"
+        hx-get="/api/devices/{{ row.id }}/logs"
+        hx-target="#logs-modal"
+        onclick="document.getElementById('logs-modal').showModal()"
         class="btn-dots cursor-pointer rounded-[0.4375rem] border border-gray-300 px-2 transition hover:border-gray-400 hover:bg-gray-100"
       >
         <i data-lucide="more-horizontal" class="w-4.5 h-4.5"></i>
