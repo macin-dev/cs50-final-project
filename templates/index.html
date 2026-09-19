@@ -1,5 +1,17 @@
 {% extends "layout.html" %} {% block title %} {{ super() }} | Home {% endblock
 %} {% block content %}
+<!-- Add device -->
+<button
+  type="button"
+  hx-get="/api/devices"
+  hx-target="#add-modal"
+  onclick="document.getElementById('add-modal').showModal()"
+  class="w-full bg-black text-white shadow-sm shadow-gray-300 rounded-lg py-2.5 px-4 font-bold cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap hover:bg-black/90"
+>
+  <i data-lucide="plus"></i>
+  Add device
+</button>
+
 <section class="border border-gray-200 rounded-2xl overflow-hidden">
   <div
     class="flex justify-between gap-4 border-b border-gray-300 px-4.25 py-3.75"
@@ -43,7 +55,7 @@
           <th class="px-4.5 py-3"></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="devices-list">
         {% for row in data %}
         <!-- row element -->
         {% include 'partials/_row.html' %} {% endfor %}

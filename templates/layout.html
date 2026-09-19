@@ -34,6 +34,11 @@
       id="logs-modal"
       class="m-0 ml-auto max-w-107.5 w-full min-h-full bg-white shadow-2xl shadow-black/50 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
     ></dialog>
+    <!-- Modal for add a device -->
+    <dialog
+      id="add-modal"
+      class="m-auto max-w-122.5 w-full bg-white rounded-2xl shadow-2xl shadow-black/50 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+    ></dialog>
     <main>{% block content %} {% endblock %}</main>
   </body>
 
@@ -68,6 +73,11 @@
     const modal = document.getElementById("logs-modal");
     modal.addEventListener("click", (el) => {
       if (el.target == modal) return modal.close();
+    });
+
+    const addModal = document.getElementById("add-modal");
+    addModal.addEventListener("click", (el) => {
+      if (el.target == addModal) return addModal.close();
     });
   </script>
 </html>

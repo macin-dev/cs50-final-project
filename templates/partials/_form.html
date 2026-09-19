@@ -1,0 +1,65 @@
+{% from 'partials/_input.html' import render_input %}
+
+<section class="rounded-2xl p-6.25">
+  <!-- Modal head -->
+  <div class="flex justify-between gap-4 mb-6">
+    <div>
+      <p
+        class="text-gray-400 font-medium tracking-widest uppercase mb-3 text-[0.6875rem]"
+      >
+        New Target
+      </p>
+
+      <h2 class="text-[1.375rem] tracking-tight font-bold">Add a device</h2>
+    </div>
+
+    <button
+      type="button"
+      onclick="document.getElementById('add-modal').close()"
+      class="inline-flex items-center justify-center bg-gray-200 w-7.75 h-7.75 rounded-lg cursor-pointer"
+    >
+      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col gap-3">
+    <!-- Device name -->
+    {{ render_input(name='name', label='Device name', placeholder='Office
+    Router') }}
+
+    <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
+      <!-- IP address -->
+      <div class="sm:flex-2">
+        {{ render_input(name='host', label='IP address',
+        placeholder='192.168.0.5') }}
+      </div>
+
+      <!-- TCP port -->
+      <div class="sm:flex-1">
+        {{ render_input(name='port', type="number", label='TCP port',
+        placeholder='443') }}
+      </div>
+    </div>
+
+    <div class="flex gap-3 ml-auto mt-2">
+      <button
+        type="button"
+        onclick="document.getElementById('add-modal').close()"
+        class="p-2.5 bg-white text-gray-900 rounded-lg font-semibold whitespace-nowrap cursor-pointer border border-gray-300 text-sm hover:bg-gray-50"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        hx-post="/api/devices"
+        hx-target="#devices-list"
+        hx-swap="beforeend"
+        onclick="document.getElementById('add-modal').close()"
+        class="p-2.5 bg-black text-white rounded-lg font-semibold whitespace-nowrap cursor-pointer text-sm hover:bg-black/80"
+      >
+        Add device
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,12 @@
+{% macro render_input(name, label, type='text', placeholder='', value='') %}
+<label for="{{ name }}" class="flex flex-col gap-1.5 text-xs font-semibold">
+  {{ label }}
+  <input
+    type="{{ type }}"
+    name="{{ name }}"
+    id="{{ name }}"
+    placeholder="{{ placeholder }}"
+    class="h-11 border border-gray-300 rounded-lg font-['Manrope'] outline-none px-3 text-sm font-normal focus:shadow-sm focus:shadow-gray-300"
+  />
+</label>
+{% endmacro %}

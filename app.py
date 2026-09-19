@@ -94,39 +94,65 @@ def check_device(device_id):
     return row, 200
 
 
-@app.route('/api/devices', methods=["POST"])
+@app.route('/api/devices', methods=["GET", "POST"])
 def add_device():
     user_id = 1
 
     # [POST] requests
     # Handling incoming JSON
     if request.method == "POST":
-        data = request.get_json()
+
+        data = request.get_json(silent=True) or request.form
+
+        deviceName = data.get("name", "").strip()
+        host = data.get("host", "").strip()
+        model = data.get("model", "").strip()
+        protocol = data.get("protocol", "HTTP")
+        raw_port = data.get("port")
+
+        try: 
+            port = int(raw_port) if raw_port else 80
+        except ValueError:
+            return {"error": "Invalid number"}, 400
 
         # Validate input
-        if not data or not data.get("name") or not data.get("host"):
+        if not deviceName or not host:
             # 400 status code for malformed requests
             return {"error": "Missing required fields"}, 400
         
         # Create instance of Device
         new_device = Device(
             user_id=user_id,
-            name=data.get("name"),
-            model=data.get("model"),
-            host=data.get("host"),
-            protocol=data.get("protocol", "HTTP"),
-            port=data.get("port")
+            name=deviceName,
+            model=model,
+            host=host,
+            protocol=protocol,
+            port=port
         )
 
         # Commit to the database
         db.session.add(new_device)
         db.session.commit()
 
+        row = {
+            "id": new_device.id,
+            "name": new_device.name,
+            "host": new_device.host,
+            "port": new_device.port,
+            "status": "UNCHECKED",
+            "latency": None,
+            "created_at": "Never"
+        }
+
+        if (request.headers.get('Hx-Request')):
+            return render_template("partials/_row.html", row=row), 200
+
         return {
             "message": "Device added succsessfully",
             "id": new_device.id
         }, 201
-    
+
+    return render_template('partials/_form.html'), 200
 
 @app.route('/api/devices/<int:device_id>', methods=["DELETE"])
 def delete_device(device_id):
