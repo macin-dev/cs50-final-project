@@ -1,0 +1,29 @@
+{% from 'partials/_input_login.html' import render_login_input %} {% extends
+"login_layout.html" %}
+
+<!-- Title -->
+{% block title %} Sign in {% endblock %}
+
+<!-- Subtitle -->
+{% block subtitle %} Enter your credentials to access your devices. {% endblock
+%}
+
+<!-- Form fields -->
+{% block fields %} {{ render_login_input(label='Email address', type='email',
+name='email', placeholder='you@example.com')}} {{
+render_login_input(label='Password', type='password', name='password',
+placeholder='Enter your password')}} {% endblock %}
+
+<!-- Submit button text -->
+{% block btnText %} Sign in {% endblock %}
+
+<!-- Link -->
+{% block btnLink %}
+<div class="mt-5 text-center text-gray-500 text-[0.8125rem]">
+  New to Netwatch
+  <a href="/register" class="font-bold text-teal-700 hover:underline"
+    >Create an account</a
+  >
+</div>
+
+{% endblock %}

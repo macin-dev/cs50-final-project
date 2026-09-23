@@ -1,18 +1,22 @@
 {% extends "layout.html" %} {% block title %} {{ super() }} | Home {% endblock
 %} {% block content %}
 <!-- Add device -->
-<button
-  type="button"
-  hx-get="/api/devices"
-  hx-target="#add-modal"
-  onclick="document.getElementById('add-modal').showModal()"
-  class="w-full bg-black text-white shadow-sm shadow-gray-300 rounded-lg py-2.5 px-4 font-bold cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap hover:bg-black/90"
->
-  <i data-lucide="plus"></i>
-  Add device
-</button>
-
-<section class="border border-gray-200 rounded-2xl overflow-hidden">
+<div class="flex flex-col gap-4 md:flex-row md:justify-between mb-6">
+  <span class="text-lg font-semibold text-gray-600"
+    >Hello, {{ user.name }}</span
+  >
+  <button
+    type="button"
+    hx-get="/api/devices"
+    hx-target="#add-modal"
+    onclick="document.getElementById('add-modal').showModal()"
+    class="w-full bg-black text-white shadow-sm shadow-gray-300 rounded-lg py-2.5 px-4 font-bold cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap hover:bg-black/90 sm:w-auto"
+  >
+    <i data-lucide="plus" class="w-4 h-4"></i>
+    Add device
+  </button>
+</div>
+<section class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
   <div
     class="flex justify-between gap-4 border-b border-gray-300 px-4.25 py-3.75"
   >
@@ -42,7 +46,7 @@
     </button>
   </div>
   <div class="overflow-x-auto">
-    <table class="w-full min-w-3xl border-collapse">
+    <table class="bg-white w-full min-w-3xl border-collapse">
       <thead
         class="border-b border-gray-300 bg-gray-100 text-[0.625rem] tracking-[0.06em] text-gray-500 uppercase"
       >

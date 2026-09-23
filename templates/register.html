@@ -1,0 +1,29 @@
+{% from 'partials/_input_login.html' import render_login_input %} {% extends
+"login_layout.html" %}
+
+<!-- Title -->
+{% block title %} Create your account {% endblock %}
+
+<!-- Subtitle -->
+{% block subtitle %} Set up a workspace for your devices {% endblock %}
+
+<!-- Form fields -->
+{% block fields %} {{ render_login_input(label='Full name', type='text',
+name='fullName', placeholder='Your name')}} {{ render_login_input(label='Email
+address', type='email', name='email', placeholder='you@example.com')}} {{
+render_login_input(label='Password', type='password', name='password',
+placeholder='At least 8 characters')}} {{ render_login_input(label='Confirm
+password', type='password', name='confirmation', placeholder='Repeat your
+password')}} {% endblock %}
+
+<!-- Submit button text -->
+{% block btnText %} Create account {% endblock %}
+
+<!-- Link -->
+{% block btnLink %}
+<div class="mt-5 text-center text-gray-500 text-[0.8125rem]">
+  Already have an account?
+  <a href="/login" class="font-bold text-teal-700 hover:underline">Sign in</a>
+</div>
+
+{% endblock %}

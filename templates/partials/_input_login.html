@@ -1,0 +1,13 @@
+{% macro render_login_input(name, label, type='text', placeholder='', value='')
+%}
+<div class="flex flex-col gap-1.5">
+  <label for="{{ name }}" class="text-xs font-semibold">{{ label }}</label>
+  <input
+    type="{{ type }}"
+    name="{{ name }}"
+    id="{{ name }}"
+    placeholder="{{ placeholder }}"
+    class="h-11.75 text-sm rounded-lg px-3.5 border border-gray-300 outline-none transition focus-within:border-teal-700 focus-within:shadow-sm"
+  />
+</div>
+{% endmacro %}

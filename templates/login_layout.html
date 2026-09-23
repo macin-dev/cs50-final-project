@@ -1,0 +1,27 @@
+{% extends"layout.html" %} {% block content %}
+<section class="grid place-items-center h-full">
+  <!-- Heading -->
+  <div class="max-w-110 w-full">
+    <div class="mb-7">
+      <h2 class="text-[1.875rem] tracking-[-0.045em] mb-2.5 font-bold">
+        {% block title %} {% endblock %}
+      </h2>
+      <p class="text-gray-500 text-sm">{% block subtitle %} {% endblock %}</p>
+    </div>
+
+    <form class="grid gap-2" method="post">
+      {% block fields %} {% endblock %}
+      <button
+        type="submit"
+        class="h-11.75 bg-black px-4 text-white rounded-lg mt-6 flex items-center justify-between cursor-pointer font-semibold text-sm shadow-md shadow-gray-300 transition hover:-translate-y-px"
+      >
+        {% block btnText %} {% endblock %}
+        <i data-lucide="move-right" class="w-4"></i>
+      </button>
+    </form>
+  </div>
+
+  <div class="self-start">{% block btnLink %} {% endblock %}</div>
+</section>
+
+{% endblock %}
