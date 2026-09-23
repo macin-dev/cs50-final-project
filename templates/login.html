@@ -14,6 +14,9 @@ name='email', placeholder='you@example.com')}} {{
 render_login_input(label='Password', type='password', name='password',
 placeholder='Enter your password')}} {% endblock %}
 
+<!-- Form action -->
+{% block formAction %}/login{% endblock %}
+
 <!-- Submit button text -->
 {% block btnText %} Sign in {% endblock %}
 

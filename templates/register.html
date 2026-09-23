@@ -16,6 +16,9 @@ placeholder='At least 8 characters')}} {{ render_login_input(label='Confirm
 password', type='password', name='confirmation', placeholder='Repeat your
 password')}} {% endblock %}
 
+<!-- Form action -->
+{% block formAction %}/register{% endblock %}
+
 <!-- Submit button text -->
 {% block btnText %} Create account {% endblock %}
 

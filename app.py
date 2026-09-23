@@ -251,6 +251,15 @@ def login():
             errors['password'] = "Missing password"
 
         if errors:
+            if request.headers.get("Hx-Request"):
+                return (
+                    render_template("partials/_errors.html", errors=errors),
+                    200,
+                    {
+                        "Hx-Retarget": "#auth-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
             return errors, 400
 
         # Check against database information
@@ -259,13 +268,23 @@ def login():
 
         # Ensure user exists and password is correct
         if not user or not check_password_hash(user.password_hash, password):
-            return {"message": "Invalid username and/or password"}, 401
+            errors["error"] = "Invalid username and/or password"
+            if request.headers.get("Hx-Request"):
+                return (
+                    render_template("partials/_errors.html", errors=errors),
+                    200,
+                    {
+                        "Hx-Retarget": "#auth-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
+            return errors, 401
 
         # Remember which user has logged in
         session["user_id"] = user.id
 
         # Redirect
-        return redirect('/')
+        return "", 200, {"HX-Redirect": "/"}
 
     return render_template("login.html")
 
@@ -284,22 +303,52 @@ def register():
         errors = {}
 
         if not fullname:
-            errors["fullname"] = "Missing name"
+            errors["fullName"] = "Missing name"
         if not email:
             errors["email"] = "Missing email"
         if not password:
             errors["password"] = "Missing password"
 
         if errors:
+            if request.headers.get("Hx-Request"):
+                return (
+                    render_template("partials/_errors.html", errors=errors),
+                    200,
+                    {
+                        "Hx-Retarget": "#auth-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
+            return errors, 400
+
+        # Check for matched password 
+        if password != confirmation:
+            errors["error"] = "Password must be the same"
+            if request.headers.get("Hx-Request"):
+                return (
+                    render_template("partials/_errors.html", errors=errors),
+                    200,
+                    {
+                        "Hx-Retarget": "#auth-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
             return errors, 400
 
         # Check duplicate emails
         existing_user = db.session.scalar(db.select(User).where(User.email == email))
         if existing_user: 
-            return {"error": "Email is already registered"}, 400
-
-        if password != confirmation:
-            return {"message": "Password must be the same"}, 400
+            errors["error"] = "Email is already registered"
+            if request.headers.get("Hx-Request"):
+                return (
+                    render_template('partials/_errors.html', errors=errors),
+                    200,
+                    {
+                        "Hx-Retarget": "#auth-errors",
+                        "Hx-Reswap": "innerHTML"
+                    }
+                )
+            return errors, 400
         
         # Hash the password
         hashed = generate_password_hash(password)
@@ -315,8 +364,11 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect("/login")
+        if request.headers.get("Hx-Request"):
+            return "", 200, {"HX-Redirect": "/login"}
 
+        return redirect("/login")
+    
     # [GET]
     return render_template("register.html")
 

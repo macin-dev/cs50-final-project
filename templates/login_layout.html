@@ -9,8 +9,11 @@
       <p class="text-gray-500 text-sm">{% block subtitle %} {% endblock %}</p>
     </div>
 
-    <form class="grid gap-2" method="post">
+    <form hx-post="{% block formAction %} {% endblock %}" class="grid gap-2">
       {% block fields %} {% endblock %}
+
+      <!-- Error authentication -->
+      <div id="auth-errors"></div>
       <button
         type="submit"
         class="h-11.75 bg-black px-4 text-white rounded-lg mt-6 flex items-center justify-between cursor-pointer font-semibold text-sm shadow-md shadow-gray-300 transition hover:-translate-y-px"
