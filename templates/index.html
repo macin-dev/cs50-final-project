@@ -21,7 +21,7 @@
     class="flex justify-between gap-4 border-b border-gray-300 px-4.25 py-3.75"
   >
     <div
-      class="inline-flex flex-1 items-center rounded-lg border border-gray-300 transition-colors focus-within:border-teal-700 focus-within:shadow-sm focus-within:shadow-teal-100"
+      class="inline-flex flex-1 items-center rounded-lg border border-gray-300 transition-colors focus-within:border-teal-700 focus-within:shadow-sm focus-within:shadow-teal-100 md:flex-none md:min-w-110"
     >
       <label for="search" class="pl-2">
         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500"></i>
@@ -67,7 +67,7 @@
     </table>
   </div>
   <footer class="px-4.5 py-3.25 bg-gray-100">
-    <span class="text-[0.6875rem] text-gray-500"
+    <span id="device-count" class="text-[0.6875rem] text-gray-500"
       >Showing {{ data|length }} device{{ 's' if data|length != 1 else
       ''}}</span
     >

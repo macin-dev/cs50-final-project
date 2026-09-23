@@ -31,6 +31,19 @@
       >
         Check
       </button>
+      <!-- Delete buttton -->
+      <button
+        hx-delete="/api/devices/{{ row.id }}"
+        hx-confirm="Are you sure?"
+        hx-target="closest tr"
+        hx-swap="delete swap:1s"
+        title="Delete device"
+        type="button"
+        class="btn-delete inline-flex items-center justify-center text-red-700 bg-red-50 w-7.75 h-7.75 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"
+      >
+        <i data-lucide="trash" class="w-4.5 h-4.5"></i>
+      </button>
+      <!-- Logs button -->
       <button
         type="button"
         hx-get="/api/devices/{{ row.id }}/logs"

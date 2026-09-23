@@ -23,10 +23,16 @@ body {
 }
 
 .htmx-request .btn-check,
-.htmx-request .btn-dots {
+.htmx-request .btn-dots,
+.htmx-request .btn-delete {
   display: none;
 }
 
 .htmx-request .spinner {
   display: inline-block;
+}
+
+tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
 }

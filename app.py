@@ -67,6 +67,7 @@ def index():
     # Return with a status code of success
     return render_template('index.html', data=data, user=user), 200
 
+
 @app.route('/api/devices/<int:device_id>/check')
 def check_device(device_id):
     # Retrieve the device from the database 
@@ -205,15 +206,31 @@ def add_device():
 
     return render_template('partials/_form.html'), 200
 
+
 @app.route('/api/devices/<int:device_id>', methods=["DELETE"])
 def delete_device(device_id):
-    # Lookup the device
+    if not session.get("user_id"):
+        return {"error": "Unauthorized"}, 401
+    
+    # Ensures the user owns this device
     device = db.get_or_404(Device, device_id)
+    if device.user_id != session.get("user_id"):
+        return {"error": "Forbidden"}, 403
     
     # Execute a SQLAlchemy statement
     db.session.delete(device)
     db.session.commit()
 
+    # Count remaining devices for this user
+    count = db.session.scalar(
+        db.select(func.count(Device.id)).where(Device.user_id == session.get("user_id"))
+    )
+
+    label = f"Showing {count} device{'s' if count != 1 else ''}"
+
+    if request.headers.get('Hx-Request'):
+        return f"<span id='device-count' hx-swap-oob='true' class='text-[0.6875rem] text-gray-500'>{label}</span>", 200
+    
     return {
         "message": "Device deleted",
         "id": device.id
