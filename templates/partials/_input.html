@@ -1,7 +1,12 @@
 {% macro render_input(name, label, type='text', placeholder='', value='',
-min=none, max=none) %}
-<label for="{{ name }}" class="flex flex-col gap-1.5 text-xs font-semibold">
-  {{ label }}
+min=none, max=none, indicator='') %}
+<div class="text-xs font-semibold">
+  <label
+    for="{{ name }}"
+    class="{% if indicator %} after:content-['*'] {% endif %} relative inline-block mb-1.5 after:text-red-700 after:absolute after:top-0.5 after:-right-1.5"
+  >
+    {{ label }}
+  </label>
   <input
     type="{{ type }}"
     name="{{ name }}"
@@ -23,7 +28,7 @@ min=none, max=none) %}
     {%
     endif
     %}
-    class="h-11 border border-gray-300 rounded-lg font-['Manrope'] outline-none px-3 text-sm font-normal focus:shadow-sm focus:shadow-gray-300"
+    class="w-full h-11 border border-gray-300 rounded-lg font-['Manrope'] outline-none px-3 text-sm font-normal focus:shadow-sm focus:shadow-gray-300"
   />
-</label>
+</div>
 {% endmacro %}

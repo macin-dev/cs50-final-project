@@ -28,21 +28,31 @@
     hx-swap="beforeend"
     class="flex flex-col gap-3"
   >
-    <!-- Device name -->
-    {{ render_input(name='name', label='Device name', placeholder='Office
-    Router') }}
+    <div class="flex flex-col gap-4 sm:flex-row sm:gap-3 static">
+      <!-- Device name -->
+      <div class="sm:flex-2">
+        {{ render_input(name='name', placeholder='Office Router', label='Device
+        name', indicator=True) }}
+      </div>
+
+      <!-- Protocol -->
+      <div class="sm:flex-1">
+        {{ render_input(name='protocol', label='Protocol', placeholder='HTTP')
+        }}
+      </div>
+    </div>
 
     <div class="flex flex-col gap-4 sm:flex-row sm:gap-3 static">
       <!-- IP address -->
       <div class="sm:flex-2">
         {{ render_input(name='host', label='IP address',
-        placeholder='192.168.0.5') }}
+        placeholder='192.168.0.5', indicator=True) }}
       </div>
 
       <!-- TCP port -->
       <div class="sm:flex-1">
         {{ render_input(name='port', type="number", label='TCP port',
-        placeholder='443') }}
+        placeholder='80') }}
       </div>
     </div>
 

@@ -14,7 +14,7 @@ class User(db.Model):
 
     # Attributes
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(50), unique=True)
+    name: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50), unique=True)
     password_hash: Mapped[str] = mapped_column(String(256))
 
@@ -31,7 +31,6 @@ class Device(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     name: Mapped[str] = mapped_column(String(50))
-    model: Mapped[str | None] = mapped_column(String(50), nullable=True)
     host: Mapped[str] = mapped_column(String(50))
     protocol: Mapped[str | None] = mapped_column(nullable=True)
     port: Mapped[int | None] = mapped_column(nullable=True, default=80)

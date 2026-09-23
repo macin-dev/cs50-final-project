@@ -120,8 +120,7 @@ def add_device():
 
         deviceName = data.get("name", "").strip()
         host = data.get("host", "").strip()
-        model = data.get("model", "").strip()
-        protocol = data.get("protocol", "HTTP")
+        protocol = data.get("protocol", "HTTP").upper()
         raw_port = data.get("port")
 
         # [FORM VALIDATION]
@@ -129,7 +128,16 @@ def add_device():
         errors = {}
 
         if not raw_port:
-            errors['port'] = "Port is missing"
+            # Simple default port mapping table:
+            DEFAULT_PORTS = {
+                "HTTP": 80,
+                "HTTPS": 443,
+                "SSH": 22,
+                "SMTP": 587,
+                "DNS": 53
+            }
+
+            port = DEFAULT_PORTS.get(protocol, 80)
         else: 
             try: 
                 port = int(raw_port)
@@ -162,7 +170,6 @@ def add_device():
         new_device = Device(
             user_id=user_id,
             name=deviceName,
-            model=model,
             host=host,
             protocol=protocol,
             port=port
@@ -239,7 +246,7 @@ def device_logs(device_id):
 def login():
     # [POST]
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
+        email = request.form.get("email", "").lower().strip()
         password = request.form.get("password", "").strip()
 
         errors = {}
@@ -294,8 +301,8 @@ def register():
 
     # [POST]
     if request.method == "POST":
-        fullname = request.form.get("fullName", "").strip()
-        email = request.form.get("email", "").strip()
+        fullname = request.form.get("fullName", "").lower().strip()
+        email = request.form.get("email", "").lower().strip()
         password = request.form.get("password", "").strip()
         confirmation = request.form.get("confirmation", "").strip()
 
