@@ -16,14 +16,14 @@
   </td>
   <td class="px-4.5 py-4.25 text-[0.8125rem]">{{ row.created_at }}</td>
   <td class="px-4.5 py-4.25 text-[0.75rem] font-semibold">
-    {% if not row.latency %} &mdash; {% else %} {{ row.latency }} ms {% endif %}
+    {% if row.latency is none %} &mdash; {% else %} {{ row.latency }} ms {% endif %}
   </td>
   <td class="px-4.5 py-4.25">
     <span class="spinner"></span>
     <div class="inline-flex gap-2">
       <button
         type="button"
-        hx-get="/api/devices/{{ row.id }}/check"
+        hx-post="/api/devices/{{ row.id }}/check"
         hx-target="closest tr"
         hx-swap="outerHTML"
         hx-indicator="closest td"
@@ -36,7 +36,7 @@
         hx-delete="/api/devices/{{ row.id }}"
         hx-confirm="Are you sure?"
         hx-target="closest tr"
-        hx-swap="delete swap:1s"
+        hx-swap="none"
         title="Delete device"
         type="button"
         class="btn-delete inline-flex items-center justify-center text-red-700 bg-red-50 w-7.75 h-7.75 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"

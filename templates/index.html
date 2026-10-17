@@ -27,23 +27,21 @@
         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500"></i>
       </label>
       <input
+        hx-get="/"
+        hx-trigger="input changed delay:300ms, search"
+        hx-target="#devices-list"
+        hx-swap="innerHTML"
+        hx-push-url="true"
         type="search"
         placeholder="Search name or IP address"
         name="search"
         aria-label="Search devices"
         autocomplete="off"
         id="search"
+        value="{{ search_term }}"
         class="h-9.75 w-full pr-3 pl-4 text-[0.8125rem] outline-none"
       />
     </div>
-
-    <button
-      type="button"
-      class="inline-flex cursor-pointer items-center justify-center gap-1.75 rounded-lg border border-gray-300 p-2.5 text-sm font-bold whitespace-nowrap transition hover:border-gray-400 hover:bg-gray-100"
-    >
-      <i data-lucide="iteration-ccw" class="w-3.5 h-3.5"></i>
-      Check all
-    </button>
   </div>
   <div class="overflow-x-auto">
     <table class="bg-white w-full min-w-3xl border-collapse">
@@ -59,10 +57,25 @@
           <th class="px-4.5 py-3"></th>
         </tr>
       </thead>
-      <tbody id="devices-list">
-        {% for row in data %}
-        <!-- row element -->
-        {% include 'partials/_row.html' %} {% endfor %}
+      <tbody
+              id="devices-list"
+              hx-get="/"
+              hx-trigger="device-created from:body, device-deleted from:body"
+              hx-include="#search"
+              hx-target="this"
+              hx-swap="innerHTML"
+      >
+          {% for row in data %}
+            {% include 'partials/_row.html' %}
+          {% endfor %}
+
+          {% if not data %}
+          <tr>
+              <td colspan="6" class="text-1xl font-semibold px-2.5 py-5">
+                  No records found
+              </td>
+          </tr>
+        {% endif %}
       </tbody>
     </table>
   </div>

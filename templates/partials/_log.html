@@ -17,8 +17,8 @@
       datetime="{{ log.created_at.isoformat() }}Z"
     ></time>
     <p class="text-gray-400 font-['DM_Mono'] text-xs">
-      Connection {% if log.status == 'ONLINE' %} succeeded {% else %} timed out
-      {% endif %} . {% if not log.response_time %} - {% else%} {{
+      Connection {% if log.status == 'ONLINE' %} succeeded {% else %} failed
+      {% endif %} . {% if log.response_time is none %} - {% else%} {{
       log.response_time }} ms {% endif %}
     </p>
   </div>

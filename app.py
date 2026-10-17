@@ -1,13 +1,14 @@
+import os
 from flask import Flask, request, render_template, session, redirect
 from models import db, Device, CheckLog, User
 from checker import check_tcp
 from flask_migrate import Migrate
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = "secret-key-netwatch"
+app.config["SECRET_KEY"] = os.environ["NETWATCH_SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///netwatch.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -49,10 +50,21 @@ def index():
         .where(Device.user_id == session.get("user_id"))
     )
 
+    # Filter data out through HX request when searching for a text
+    search_term = request.args.get("search", "").strip()
+    if search_term:
+        # Filter out data through SQLAlchemy
+        stmt = (
+            stmt.where(
+                or_(
+                    Device.name.ilike(f"%{search_term}%"),
+                    Device.host.ilike(f"%{search_term}%")
+                ))
+        )
+
     devices = db.session.execute(stmt).all()
     data = []
 
-    # Serializing Python objects into JSON
     for device, log in devices:
         data.append({
             "id": device.id,
@@ -64,15 +76,28 @@ def index():
             "created_at": log.created_at if log else "Never"
         })
 
+    # Return the filtered data as HTML table with rows
+    if request.headers.get("Hx-Request"):
+            return render_template('partials/_table_rows.html', items=data), 200
+
     # Return with a status code of success
-    return render_template('index.html', data=data, user=user), 200
+    return render_template('index.html', data=data, user=user, search_term=search_term), 200
 
 
-@app.route('/api/devices/<int:device_id>/check')
+@app.route('/api/devices/<int:device_id>/check', methods=["POST"])
 def check_device(device_id):
+    # Redirect unauthorized users
+    if not session.get("user_id"):
+        return {"error": "Unauthorized"}, 401
+
     # Retrieve the device from the database 
     # and check the TCP connection
     device = db.get_or_404(Device, device_id)
+
+    # Ensures the user owns this device
+    if device.user_id != session.get("user_id"):
+        return {"error": "Forbidden"}, 403
+
     conn = check_tcp(device.host, device.port)
 
     # Record new row in the check_logs
@@ -114,14 +139,13 @@ def add_device():
         return {"error": "Unauthorized. Please log in."}, 401
 
     # [POST] requests
-    # Handling incoming JSON
     if request.method == "POST":
 
-        data = request.get_json(silent=True) or request.form
+        data =  request.form
 
         deviceName = data.get("name", "").strip()
         host = data.get("host", "").strip()
-        protocol = data.get("protocol", "HTTP").upper()
+        protocol = data.get("protocol", "HTTP").strip().upper()
         raw_port = data.get("port")
 
         # [FORM VALIDATION]
@@ -180,22 +204,12 @@ def add_device():
         db.session.add(new_device)
         db.session.commit()
 
-        row = {
-            "id": new_device.id,
-            "name": new_device.name,
-            "host": new_device.host,
-            "port": new_device.port,
-            "status": "UNCHECKED",
-            "latency": None,
-            "created_at": "Never"
-        }
-
-        if (request.headers.get('Hx-Request')):
+        if request.headers.get('Hx-Request'):
             return (
-                render_template("partials/_row.html", row=row), 
+                "",
                 200,
                 { 
-                    "HX-Trigger-After-Swap": "device-created"
+                    "HX-Trigger": "device-created"
                 },
             )
 
@@ -221,15 +235,14 @@ def delete_device(device_id):
     db.session.delete(device)
     db.session.commit()
 
-    # Count remaining devices for this user
-    count = db.session.scalar(
-        db.select(func.count(Device.id)).where(Device.user_id == session.get("user_id"))
-    )
-
-    label = f"Showing {count} device{'s' if count != 1 else ''}"
-
     if request.headers.get('Hx-Request'):
-        return f"<span id='device-count' hx-swap-oob='true' class='text-[0.6875rem] text-gray-500'>{label}</span>", 200
+        return (
+            "",
+            200,
+            {
+                "HX-Trigger": "device-deleted"
+            }
+        )
     
     return {
         "message": "Device deleted",
@@ -239,7 +252,16 @@ def delete_device(device_id):
 
 @app.route('/api/devices/<int:device_id>/logs')
 def device_logs(device_id):
+    # Redirect unauthorized users
+    if not session.get("user_id"):
+       return {"error": "Unauthorized"}, 401
+
     device = db.get_or_404(Device, device_id)
+
+    # Ensures the user owns this device
+    if device.user_id != session.get("user_id"):
+        return {"error": "Forbidden"}, 403
+
     logs = device.check_logs
 
     results = []
@@ -264,7 +286,7 @@ def login():
     # [POST]
     if request.method == "POST":
         email = request.form.get("email", "").lower().strip()
-        password = request.form.get("password", "").strip()
+        password = request.form.get("password", "")
 
         errors = {}
 
@@ -320,8 +342,8 @@ def register():
     if request.method == "POST":
         fullname = request.form.get("fullName", "").lower().strip()
         email = request.form.get("email", "").lower().strip()
-        password = request.form.get("password", "").strip()
-        confirmation = request.form.get("confirmation", "").strip()
+        password = request.form.get("password", "")
+        confirmation = request.form.get("confirmation", "")
 
         # Validate data
         errors = {}

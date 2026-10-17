@@ -6,3 +6,4 @@ instance/
 .DS_Store
 .prettierrcs
 node_modules
+.idea/

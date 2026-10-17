@@ -1,0 +1,15 @@
+{% if items %}
+    {% for row in items %}
+        {% include 'partials/_row.html' %}
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="6" class="text-1xl font-semibold px-2.5 py-5">
+            No records found
+        </td>
+    </tr>
+{% endif %}
+
+<span id='device-count' hx-swap-oob='true' class='text-[0.6875rem] text-gray-500'>
+    Showing {{ items|length }} device{{'s' if items|length != 1 else '' }}
+</span>

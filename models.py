@@ -35,7 +35,6 @@ class Device(db.Model):
     protocol: Mapped[str | None] = mapped_column(nullable=True)
     port: Mapped[int | None] = mapped_column(nullable=True, default=80)
 
-    # Allow access back to the device's data trought the CheckLog table
     owner: Mapped["User"] = relationship(back_populates="devices")
 
     check_logs: Mapped[list["CheckLog"]] = relationship(

@@ -41,6 +41,8 @@
     --text-sm--line-height: calc(1.25 / 0.875);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
@@ -481,9 +483,6 @@
   .bg-red-50 {
     background-color: var(--color-red-50);
   }
-  .bg-red-600 {
-    background-color: var(--color-red-600);
-  }
   .bg-red-700 {
     background-color: var(--color-red-700);
   }
@@ -516,6 +515,9 @@
   }
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
+  }
+  .px-2\.5 {
+    padding-inline: calc(var(--spacing) * 2.5);
   }
   .px-2\.25 {
     padding-inline: calc(var(--spacing) * 2.25);
@@ -559,6 +561,9 @@
   .py-4\.25 {
     padding-block: calc(var(--spacing) * 4.25);
   }
+  .py-5 {
+    padding-block: calc(var(--spacing) * 5);
+  }
   .pt-7\.5 {
     padding-top: calc(var(--spacing) * 7.5);
   }
@@ -591,6 +596,10 @@
   }
   .font-\[\'Manrope\'\] {
     font-family: 'Manrope';
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
   }
   .text-lg {
     font-size: var(--text-lg);
@@ -824,9 +833,6 @@
     }
     .hover\:bg-red-100:hover {
       background-color: var(--color-red-100);
-    }
-    .hover\:bg-red-700:hover {
-      background-color: var(--color-red-700);
     }
     .hover\:bg-slate-50:hover {
       background-color: var(--color-slate-50);
